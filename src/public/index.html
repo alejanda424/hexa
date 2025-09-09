@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Autenticación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #2a5298;
+            background: white;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+        }
+
+        .tab-content {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        input[type="email"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #2a5298;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+            transform: translateY(-2px);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(42, 82, 152, 0.3);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        .message {
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+        }
+
+        .error {
+            background: linear-gradient(45deg, #dc3545, #fd7e14);
+            color: white;
+            border: none;
+        }
+
+        .profile {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 16px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .profile h3 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 300;
+        }
+
+        .profile p {
+            margin-bottom: 12px;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .profile strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .profile button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .profile button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-card {
+                margin: 10px;
+            }
+            
+            .tab-content {
+                padding: 25px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-card">
+        <div class="header">
+            <h1>Bienvenido</h1>
+            <p>Accede a tu cuenta de forma segura</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('login', event)">Iniciar Sesión</button>
+            <button class="tab" onclick="showTab('register', event)">Registrarse</button>
+        </div>
+
+        <div class="tab-content">
+            <div id="loginTab">
+                <h2 style="color: #2a5298; margin-bottom: 30px; font-weight: 300;">Iniciar Sesión</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">📧 Correo Electrónico</label>
+                        <input type="email" id="loginEmail" required placeholder="tu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">🔒 Contraseña</label>
+                        <input type="password" id="loginPassword" required placeholder="••••••••">
+                    </div>
+                    <button type="submit">Acceder</button>
+                </form>
+            </div>
+
+            <div id="registerTab" class="hidden">
+                <h2 style="color: #2a5298; margin-bottom: 30px; font-weight: 300;">Crear Cuenta</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerEmail">📧 Correo Electrónico</label>
+                        <input type="email" id="registerEmail" required placeholder="tu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">🔒 Contraseña</label>
+                        <input type="password" id="registerPassword" required placeholder="••••••••">
+                    </div>
+                    <button type="submit">Registrarse</button>
+                </form>
+            </div>
+
+            <div id="messages"></div>
+
+            <div id="profileSection" class="profile hidden">
+                <h3>👋 Perfil de Usuario</h3>
+                <div id="profileData"></div>
+                <button onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentToken = localStorage.getItem('token');
+
+        function showTab(tab, event) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('[id$="Tab"]').forEach(t => t.classList.add('hidden'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.remove('hidden');
+            
+            clearMessages();
+        }
+
+        function showMessage(message, type) {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = `<div class="message ${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                clearMessages();
+            }, 5000);
+        }
+
+        function clearMessages() {
+            document.getElementById('messages').innerHTML = '';
+        }
+
+        function showProfile(userData) {
+            const createdAt = userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'No disponible';
+            document.getElementById('profileData').innerHTML = `
+                <p><strong>🆔 ID:</strong> ${userData.id}</p>
+                <p><strong>📧 Email:</strong> ${userData.email}</p>
+                <p><strong>📅 Creado:</strong> ${createdAt}</p>
+            `;
+            document.getElementById('profileSection').classList.remove('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            currentToken = null;
+            document.getElementById('profileSection').classList.add('hidden');
+            showMessage('Sesión cerrada exitosamente', 'success');
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            console.log('Intentando login con:', { email, password: '***' });
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                console.log('Respuesta del servidor:', response.status, response.statusText);
+                
+                const data = await response.json();
+                console.log('Datos recibidos:', data);
+
+                if (data.success) {
+                    currentToken = data.data.token;
+                    localStorage.setItem('token', currentToken);
+                    showMessage('Inicio de sesión exitoso', 'success');
+                    showProfile(data.data.user);
+                    document.getElementById('loginForm').reset();
+                } else {
+                    showMessage(data.message || 'Error en el login', 'error');
+                }
+            } catch (error) {
+                console.error('Error en login:', error);
+                showMessage('Error de conexión con el servidor', 'error');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            console.log('Intentando registro con:', { email, password: '***' });
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                console.log('Respuesta del servidor:', response.status, response.statusText);
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('El servidor no devolvió JSON válido');
+                }
+
+                const data = await response.json();
+                console.log('Datos recibidos:', data);
+
+                if (data.success) {
+                    showMessage('Usuario registrado exitosamente. Ahora puedes iniciar sesión.', 'success');
+                    document.getElementById('registerForm').reset();
+                    setTimeout(() => {
+                        document.querySelector('.tab').click();
+                    }, 2000);
+                } else {
+                    showMessage(data.message || 'Error en el registro', 'error');
+                }
+            } catch (error) {
+                console.error('Error en registro:', error);
+                showMessage(`Error de conexión: ${error.message}`, 'error');
+            }
+        });
+
+        if (currentToken) {
+            console.log('Token encontrado, verificando sesión...');
+            fetch('/api/auth/profile', {
+                headers: {
+                    'Authorization': `Bearer ${currentToken}`
+                }
+            })
+            .then(response => {
+                console.log('Respuesta de perfil:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Datos de perfil:', data);
+                if (data.success) {
+                    showProfile(data.data);
+                } else {
+                    console.log('Token inválido, eliminando...');
+                    localStorage.removeItem('token');
+                    currentToken = null;
+                }
+            })
+            .catch((error) => {
+                console.error('Error verificando sesión:', error);
+                localStorage.removeItem('token');
+                currentToken = null;
+            });
+        }
+    </script>
+</body>
+</html>
