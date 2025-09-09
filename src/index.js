@@ -4,18 +4,11 @@ const cors = require('cors');
 const helmet = require('helmet');
 const path = require('path');
 
-// Infrastructure
 const Database = require('./infraestructure/config/database');
 const createAuthMiddleware = require('./infraestructure/config/middleware/auth.middleware');
-
-// Domain Services
 const AuthService = require('./domain/services/auth.service');
-
-// Application Use Cases
 const RegisterUserUseCase = require('./infraestructure/use-cases/register-user.user');
 const LoginUserUseCase = require('./infraestructure/use-cases/login-user.user');
-
-// Adapters
 const UserRepository = require('./infraestructure/repositories/user.repository');
 const AuthController = require('./infraestructure/controllers/auth.controller');
 const createAuthRoutes = require('./infraestructure/routes/auth.routes');
@@ -28,13 +21,10 @@ class Application {
     }
 
     async initialize() {
-        // Initialize Services
         const authService = new AuthService(process.env.JWT_SECRET);
 
-        // Initialize Repositories
         const userRepository = new UserRepository(this.database);
 
-        // Initialize Use Cases
         const registerUserUseCase = new RegisterUserUseCase({ 
             userRepository, 
             authService 
@@ -45,13 +35,11 @@ class Application {
             authService
         );
 
-        // Initialize Controllers
         const authController = new AuthController(
             registerUserUseCase,
             loginUserUseCase
         );
 
-        // Initialize Middleware
         const authMiddleware = createAuthMiddleware({ 
             authService, 
             userRepository 
@@ -150,4 +138,5 @@ process.on('SIGTERM', async () => {
 
 const app = new Application();
 global.app = app;
+
 app.start();
