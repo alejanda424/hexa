@@ -6,7 +6,7 @@ class Database {
             host: process.env.DB_HOST || 'localhost',
             user: process.env.DB_USER || 'root',
             password: process.env.DB_PASSWORD || '',
-            database: process.env.DB_NAME || 'login_db',
+            database: process.env.DB_NAME || 'taller4_db',
             waitForConnections: true,
             connectionLimit: 10,
             queueLimit: 0,
@@ -63,5 +63,6 @@ class Database {
         return this.pool.end();
     }
 }
+
 
 module.exports = Database;
