@@ -1,11 +1,10 @@
 {
   "name": "src",
   "version": "1.0.0",
-  "description": "Autenticación y autorización con arquitectura hexagonal",
+  "description": "Arquitectura hexagonal",
   "main": "index.js",
   "scripts": {
-    "start": "index.js",
-    "dev": "index.js"
+    "start": "index.js"
   },
   "keywords": [],
   "author": "",
